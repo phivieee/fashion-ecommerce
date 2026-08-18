@@ -1,17 +1,12 @@
--- Fashion E-Commerce Customer Behaviour 2025
--- Portfolio Analysis Query Pack
--- PostgreSQL / DBeaver
 
--- 0) ROW COUNT VALIDATION
+
+-- ROW COUNT VALIDATION
 SELECT 'dim_customer' AS table_name, COUNT(*) AS rows FROM dim_customer
 UNION ALL SELECT 'dim_product', COUNT(*) FROM dim_product
 UNION ALL SELECT 'dim_campaign', COUNT(*) FROM dim_campaign
 UNION ALL SELECT 'fact_orders', COUNT(*) FROM fact_orders
 UNION ALL SELECT 'fact_order_items', COUNT(*) FROM fact_order_items
 UNION ALL SELECT 'fact_customer_events', COUNT(*) FROM fact_customer_events;
-
-
--- ============================================================
 
 -- 8.1 MONTHLY SALES TREND
 
@@ -25,9 +20,6 @@ FROM fact_orders
 WHERE order_status = 'Completed'
 GROUP BY 1
 ORDER BY 1;
-
-
--- ============================================================
 
 -- 8.2 NEW YEAR EVENT PERFORMANCE
 
@@ -44,8 +36,6 @@ SELECT
 FROM fact_orders
 GROUP BY 1;
 
-
--- ============================================================
 
 -- 8.3 REVENUE PER DAY
 
@@ -66,9 +56,6 @@ SELECT
 FROM daily
 GROUP BY period;
 
-
--- ============================================================
-
 -- 8.4 CUSTOMER FUNNEL
 
 SELECT
@@ -78,9 +65,6 @@ SELECT
     COUNT(DISTINCT CASE WHEN event_type = 'begin_checkout' THEN session_id END) AS checkout_sessions,
     COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN session_id END) AS purchase_sessions
 FROM fact_customer_events;
-
-
--- ============================================================
 
 -- 8.5 FUNNEL CONVERSION BY TRAFFIC SOURCE
 
@@ -102,9 +86,6 @@ SELECT
 FROM source_funnel
 ORDER BY session_conversion_pct DESC;
 
-
--- ============================================================
-
 -- 8.6 PEAK SHOPPING HOUR
 
 SELECT
@@ -115,9 +96,6 @@ FROM fact_orders
 WHERE order_status = 'Completed'
 GROUP BY 1
 ORDER BY 1;
-
-
--- ============================================================
 
 -- 8.7 TOP CATEGORY DURING NEW YEAR
 
@@ -152,9 +130,6 @@ GROUP BY p.product_name, p.category
 ORDER BY sales_idr DESC
 LIMIT 10;
 
-
--- ============================================================
-
 -- 8.9 MEMBERSHIP SEGMENT
 
 SELECT
@@ -168,9 +143,6 @@ JOIN dim_customer c ON o.customer_id = c.customer_id
 WHERE o.order_status = 'Completed'
 GROUP BY c.membership_level
 ORDER BY revenue_idr DESC;
-
-
--- ============================================================
 
 -- NEW VS EXISTING CUSTOMER
 
@@ -196,8 +168,6 @@ WHERE o.order_status = 'Completed'
 GROUP BY 1;
 
 
--- ============================================================
-
 -- REPEAT PURCHASE RATE
 
 WITH customer_orders AS (
@@ -213,9 +183,6 @@ SELECT
     COUNT(*) FILTER (WHERE completed_orders >= 2) AS repeat_customers,
     ROUND(100.0 * COUNT(*) FILTER (WHERE completed_orders >= 2) / NULLIF(COUNT(*),0), 2) AS repeat_customer_pct
 FROM customer_orders;
-
-
--- ============================================================
 
 -- TOP PRODUCT PER CATEGORY
 
@@ -240,8 +207,6 @@ FROM ranked
 WHERE category_rank <= 3
 ORDER BY category, category_rank;
 
-
--- ============================================================
 
 -- RFM SEGMENTATION
 
@@ -276,9 +241,6 @@ SELECT
     END AS rfm_segment
 FROM scored
 ORDER BY monetary DESC;
-
-
--- ============================================================
 
 -- CREATE VW_SALES_LINE
 
@@ -315,9 +277,6 @@ JOIN dim_product p ON oi.product_id = p.product_id
 JOIN dim_customer c ON o.customer_id = c.customer_id
 JOIN dim_campaign ca ON o.campaign_id = ca.campaign_id;
 
-
--- ============================================================
-
 -- CREATE VW_CUSTOMER_SUMMARY
 
 CREATE OR REPLACE VIEW vw_customer_summary AS
@@ -337,9 +296,6 @@ SELECT
 FROM dim_customer c
 LEFT JOIN fact_orders o ON c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.gender, c.age, c.age_group, c.city, c.province, c.membership_level;
-
-
--- ============================================================
 
 -- CREATE VW_SESSION_FUNNEL
 
