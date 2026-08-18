@@ -1,5 +1,4 @@
--- Fashion E-Commerce Customer Behaviour 2025
--- Synthetic portfolio dataset
+
 CREATE DATABASE fashion_ecommerce_2025;
 SELECT current_database();
 CREATE TABLE dim_customer (
