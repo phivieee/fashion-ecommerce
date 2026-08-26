@@ -1,7 +1,0 @@
-"table_name","rows"
-dim_customer,1000
-dim_product,35
-dim_campaign,7
-fact_orders,5000
-fact_order_items,8700
-fact_customer_events,10000
